@@ -90,7 +90,7 @@ local function get_meta_property(dom, property)
   return get_meta(dom, "property", property)
 end
 
-htmlparser_looplimit=1000009
+htmlparser_looplimit=100009
 local dom,msg = html.parse(body)
 print("parse status", msg, errorsparse)
 
