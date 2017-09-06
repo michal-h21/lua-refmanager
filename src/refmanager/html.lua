@@ -21,9 +21,12 @@ local function get_meta_property(dom, property)
   return get_meta(dom, "property", property)
 end
 
+local www = http.new(url)
+www:go()
+local body = www:get_body()
 htmlparser_looplimit=100009
 local dom,msg = html.parse(body)
-print("parse status", msg, errorsparse)
+print("parse status", msg)
 
 local j = dom:select("head title")
 -- local j = dom:select("script")
