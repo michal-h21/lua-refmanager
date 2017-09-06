@@ -21,8 +21,9 @@ function Request.go(self)
   local request = self.request
   self.headers, self.stream = assert(request:go())
   self.status = self:get_status()
-  self.body   = self.stream:get_body_as_string()
-  self:encoding()
+  self.raw_body   = self.stream:get_body_as_string()
+  self:fix_encoding()
+  self:fix_charset()
   return self
 end
 
@@ -34,61 +35,72 @@ function Request.get_status(self)
   return false
 end
 
-function Request.encoding(self)
-  local headers = self.headers
-  local contenttype = headers["content-type"]
-  print(contenttype)
+function Request.get_body(self)
+  return self.body or self.raw_body
 end
 
+
+function Request.save_body(self,body)
+  self.body = body
+end
+
+function Request.fix_encoding(self)
+  -- handle gzipped content
+  local headers = self.headers
+  local encoding
+  for k,v in pairs(headers) do
+    if k == "content-encoding" then
+      encoding = v
+      break
+    end
+  end
+  if encoding and encoding ==  "gzip" then
+    local body = self:get_body()
+    local gzipsream  = zlib.inflate(body)
+    local t = {}
+    for line in  gzipsream:lines() do
+      t[#t+1] = line
+    end
+    gzipsream:close()
+    body = table.concat(t, "\n")
+    self:save_body()
+    -- print(body)
+  end
+end
+
+
+function Request.fix_charset(self)
+  local headers = self.headers
+  local contenttype
+  -- for some reason, direct access to headers["content-type"] doesn't work,
+  -- hence this hack
+  for k,v in pairs(headers) do
+    if k=="content-type" then
+      contenttype = v
+      break
+    end
+  end
+  if contenttype then
+    local charset = contenttype:match("charset=(.+)")
+    -- print("contenttype", contenttype,charset)
+    if charset and charset:lower() ~= "utf-8" then
+      local body = self:get_body()
+      local cd =  iconv.new("utf8", charset)
+      if cd then
+        self:set_body(cd:iconv(body))
+      else
+        -- ToDo: handle error if iconv for that charset isn't available
+        -- print("can't open iconv for " ..charset)
+      end
+    end
+  else
+    print("no content type", contenttype)
+  end
+
+end
+
+
+
+
+
 return Request
-
-
--- local body = assert()
--- if  then
---   error(body)
--- end
--- -- print(body)
-
--- local contenttype = headers["content-type"]
--- local encoding
--- for k,v in pairs(headers) do
---   -- print("headers", "#"..k.."#",v)
---   if k=="content-type" then
---     contenttype = v
---   elseif k == "content-encoding" then
---     encoding = v
---   end
--- end
-
--- -- handle gzip compressed
--- if encoding then
---   if encoding == "gzip" then
---     -- print("decompress", body:len())
---     local f = io.open("juj.gz", "w")
---     f:write(body)
---     f:close()
---     local gzipsream  = zlib.inflate(body)
---     local t = {}
---     for line in  gzipsream:lines() do
---       t[#t+1] = line
---     end
---     gzipsream:close()
---     body = table.concat(t, "\n")
---     -- print(body)
---   end
--- end
-
--- if contenttype then
---   local charset = contenttype:match("charset=(.+)")
---   print("contenttype", contenttype,charset)
---   if charset and charset:lower() ~= "utf-8" then
---     local cd =  iconv.new("utf8", charset)
---     if cd then
---       body = cd:iconv(body)
---     else
---       print("can't open iconv for " ..charset)
---     end
---   end
--- else
---   print("no content type", contenttype)
--- end
