@@ -47,23 +47,12 @@ end
 function Request.fix_encoding(self)
   -- handle gzipped content
   local headers = self.headers
-  local encoding
-  for k,v in pairs(headers) do
-    if k == "content-encoding" then
-      encoding = v
-      break
-    end
-  end
+  local encoding = headers:get "content-encoding"
   if encoding and encoding ==  "gzip" then
     local body = self:get_body()
-    local gzipsream  = zlib.inflate(body)
-    local t = {}
-    for line in  gzipsream:lines() do
-      t[#t+1] = line
-    end
-    gzipsream:close()
-    body = table.concat(t, "\n")
-    self:save_body()
+    local gzipsream  = zlib.inflate()
+    local newbody = gzipsream(body)
+    self:save_body(newbody)
     -- print(body)
   end
 end
