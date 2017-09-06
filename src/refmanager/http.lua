@@ -60,30 +60,21 @@ end
 
 function Request.fix_charset(self)
   local headers = self.headers
-  local contenttype
-  -- for some reason, direct access to headers["content-type"] doesn't work,
-  -- hence this hack
-  for k,v in pairs(headers) do
-    if k=="content-type" then
-      contenttype = v
-      break
-    end
-  end
+  local contenttype = headers:get "content-type"
   if contenttype then
     local charset = contenttype:match("charset=(.+)")
-    -- print("contenttype", contenttype,charset)
+    print("contenttype", contenttype,charset)
     if charset and charset:lower() ~= "utf-8" then
       local body = self:get_body()
       local cd =  iconv.new("utf8", charset)
       if cd then
-        self:set_body(cd:iconv(body))
+        self:save_body(cd:iconv(body))
       else
         -- ToDo: handle error if iconv for that charset isn't available
         -- print("can't open iconv for " ..charset)
       end
     end
-  else
-    print("no content type", contenttype)
+    -- print("no content type", contenttype)
   end
 
 end
