@@ -1,0 +1,23 @@
+package = "lua-refmanager"
+version = "0.1.0-1"
+source = {
+  url = "https://github.com/michal-h21/lua-refmanager/archive/v0.1.0.tar.gz",
+  dir = "lua-refmanager-0.1.0-1"
+}
+description = {
+  summary = "lua-refmanager",
+  detailed = [[
+    Command line bibliography manager
+  ]],
+  homepage = "https://github.com/michal-h21/lua-refmanager/",
+  license = "MIT <http://opensource.org/licenses/MIT>"
+}
+dependencies = {
+  "lua >= 5.1"
+}
+build = {
+  type = "builtin",
+   modules = {
+    lua-refmanager = "src/lua-refmanager.lua"
+  }
+}
