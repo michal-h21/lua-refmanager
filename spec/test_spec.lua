@@ -1,6 +1,6 @@
 -- test_spec.lua
 expose("exposed test for lua-refmanager", function()
-    require("lua-refmanager")
+    require("refmanager")
 
     -- tests can go here
 
