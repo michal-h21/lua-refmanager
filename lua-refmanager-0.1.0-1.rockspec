@@ -13,11 +13,18 @@ description = {
   license = "MIT <http://opensource.org/licenses/MIT>"
 }
 dependencies = {
-  "lua >= 5.1"
+  "lua >= 5.1",
+  "http",
+  "htmlparser",
+  "lua-iconv",
+  "lua-zlib"
 }
 build = {
   type = "builtin",
    modules = {
-    lua-refmanager = "src/lua-refmanager.lua"
+    -- ["lua-refmanager"] = "src/lua-refmanager.lua"
+    ["refmanager.tidy"] = "src/refmanager/tidy.lua",
+    ["refmanager.html"] = "src/refmanager/html.lua",
+    ["refmanager.http"] = "src/refmanager/http.lua"
   }
 }
