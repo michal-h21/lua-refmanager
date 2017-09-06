@@ -1,78 +1,9 @@
 -- local scanner = require "web_sanitize.query"
 local html = require "htmlparser"
-local http_request = require "http.request"
-local iconv = require "iconv"
-local zlib = require "zlib"
+local http = require "refmanager.http"
 local url = arg[1] or "http://bair.berkeley.edu/blog/2017/07/18/learning-to-learn/"
-local request = http_request.new_from_uri(url)
-request.headers:append("Accept-Charset", "UTF-8")
--- request.headers:append("Accept-Encoding", "identity;q=1.0")
-for name, value in request.headers:each() do
-  -- print("header", name, value)
-end
-local headers, stream = assert(request:go())
-local body = assert(stream:get_body_as_string())
-if headers:get ":status" ~= "200" then
-  error(body)
-end
--- print(body)
-
-local contenttype = headers["content-type"]
-local encoding
-for k,v in pairs(headers) do
-  -- print("headers", "#"..k.."#",v)
-  if k=="content-type" then
-    contenttype = v
-  elseif k == "content-encoding" then
-    encoding = v
-  end
-end
-
--- handle gzip compressed
-if encoding then
-  if encoding == "gzip" then
-    -- print("decompress", body:len())
-    local f = io.open("juj.gz", "w")
-    f:write(body)
-    f:close()
-    local gzipsream  = zlib.inflate(body)
-    local t = {}
-    for line in  gzipsream:lines() do
-      t[#t+1] = line
-    end
-    gzipsream:close()
-    body = table.concat(t, "\n")
-    -- print(body)
-  end
-end
-
-if contenttype then
-  local charset = contenttype:match("charset=(.+)")
-  print("contenttype", contenttype,charset)
-  if charset and charset:lower() ~= "utf-8" then
-    local cd =  iconv.new("utf8", charset)
-    if cd then
-      body = cd:iconv(body)
-    else
-      print("can't open iconv for " ..charset)
-    end
-  end
-else
-  print("no content type", contenttype)
-end
-
-  
-
--- for chunk in stream:each_chunk() do
---   print(chunk)
--- end
 
 
--- local p = [[
--- <html>
--- <head><title>pokus</title></head>
--- </head>
--- ]]
 
 local function get_meta(dom, attr_name, value)
   local selected = dom:select("meta["..attr_name .."='"..value .. "']")
