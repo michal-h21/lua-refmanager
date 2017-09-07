@@ -20,33 +20,12 @@ local function build_options(options)
   return table.concat(options, " ")
 end
 
-local function tidy(s, options)
-  -- we cannot get read/write pipe in Lua, so we need to save the parsed string to temporary file
-  local tmpname = os.tmpname()
-  local f = io.open(tmpname, "w")
-  f:write(s)
-  f:close()
-  local result = tidy_file(tmpname)
-  os.remove(tmpname)
-  return result
-end
-
 -- return tmpfilename and the redirection string
 local function make_stderr()
   local stderr = os.tmpname()
   local redirection = string.format("2> %s", newfile)
   return stderr, redirection
 end
-
-
-local function strip_comments(s)
-  return s:gsub("<!%-%-.-%-%->", "")
-end
-
-local function strip_scripts(s)
-  return s:gsub("<script.-</script>", "")
-end
-
 
 -- options will be passed to tidy command. they can be passed as string or table
 local function tidy_file(filename,options)
@@ -65,6 +44,29 @@ local function tidy_file(filename,options)
   os.remove(stderr)
   return result
 end
+
+local function tidy(s, options)
+  -- we cannot get read/write pipe in Lua, so we need to save the parsed string to temporary file
+  local tmpname = os.tmpname()
+  local f = io.open(tmpname, "w")
+  f:write(s)
+  f:close()
+  local result = tidy_file(tmpname)
+  os.remove(tmpname)
+  return result
+end
+
+
+
+local function strip_comments(s)
+  return s:gsub("<!%-%-.-%-%->", "")
+end
+
+local function strip_scripts(s)
+  return s:gsub("<script.-</script>", "")
+end
+
+
 
 local M = {
   tidy = tidy,
