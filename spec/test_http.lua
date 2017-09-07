@@ -10,6 +10,10 @@ expose("Test http connection", function()
       assert.are.equal(request:get_status(), 200)
       
     end)
+    local origbody = request:get_body()
+    it("body should be string", function()
+      assert.are.equal(type(origbody), "string")
+    end)
   end)
 
 
