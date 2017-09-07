@@ -53,7 +53,6 @@ function Request.fix_encoding(self)
     local gzipsream  = zlib.inflate()
     local newbody = gzipsream(body)
     self:save_body(newbody)
-    -- print(body)
   end
 end
 
@@ -63,7 +62,6 @@ function Request.fix_charset(self)
   local contenttype = headers:get "content-type"
   if contenttype then
     local charset = contenttype:match("charset=(.+)")
-    print("contenttype", contenttype,charset)
     if charset and charset:lower() ~= "utf-8" then
       local body = self:get_body()
       local cd =  iconv.new("utf8", charset)
@@ -71,10 +69,8 @@ function Request.fix_charset(self)
         self:save_body(cd:iconv(body))
       else
         -- ToDo: handle error if iconv for that charset isn't available
-        -- print("can't open iconv for " ..charset)
       end
     end
-    -- print("no content type", contenttype)
   end
 
 end
