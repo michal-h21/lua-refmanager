@@ -1,6 +1,7 @@
 -- local scanner = require "web_sanitize.query"
-local html = require "htmlparser"
-local http = require "refmanager.http"
+-- local html = require "htmlparser"
+-- local http = require "refmanager.http"
+local html = require "refmanager.html"
 local url = arg[1] or "http://bair.berkeley.edu/blog/2017/07/18/learning-to-learn/"
 
 
@@ -21,12 +22,13 @@ local function get_meta_property(dom, property)
   return get_meta(dom, "property", property)
 end
 
-local www = http.new(url)
-www:go()
-local body = www:get_body()
-htmlparser_looplimit=100009
-local dom,msg = html.parse(body)
-print("parse status", msg)
+local www = html.new()
+-- www:url(url)
+-- local body = www:get_body()
+-- htmlparser_looplimit=100009
+local dom,msg = www:url(url):get_dom()-- html.parse(body)
+-- local dom,msg = www:url(url):clean():get_dom()-- html.parse(body)
+print(www:get_body())
 
 local j = dom:select("head title")
 -- local j = dom:select("script")
