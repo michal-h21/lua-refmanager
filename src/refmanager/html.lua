@@ -25,7 +25,7 @@ end
 -- Remove the current document from memory, prepare for loading of another one
 function Html:reset()
   self.body = nil
-  self.url  = nil
+  self.url_address  = nil
   self.dom  = nil
   return self
 end
@@ -37,7 +37,7 @@ function Html:url(url)
   www:go()
   if www:get_status() == 200 then
     self:reset()
-    self.url = url
+    self.url_address = url
     local body = www:get_body()
     self.origbody = body
   end
