@@ -1,3 +1,7 @@
+--- HTML handling library for Refmanager
+-- @classmod refmanager.html
+-- @author Michal Hoftich
+--
 local tidy = require "refmanager.tidy"
 local http = require "refmanager.http"
 local htmlparser = require "htmlparser"
@@ -7,6 +11,9 @@ local io = require "io"
 local Html = {}
 Html.__index = Html
 
+--- Creates new Html object
+-- @tparam[opt] string body HTML string to be processed
+-- @return Html
 function Html.new(body)
   local self = setmetatable({}, Html)
   self.origbody = body
@@ -14,12 +21,17 @@ function Html.new(body)
 end
 
 
+--- @type Html
+-- Remove the current document from memory, prepare for loading of another one
 function Html:reset()
   self.body = nil
   self.url  = nil
   self.dom  = nil
+  return self
 end
 
+--- Load HTML document from an URL
+-- @param url URL of the HTML page to be loaded
 function Html:url(url)
   local www = http.new(url)
   www:go()
