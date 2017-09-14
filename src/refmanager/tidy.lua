@@ -51,7 +51,7 @@ local function tidy(s, options)
   local f = io.open(tmpname, "w")
   f:write(s)
   f:close()
-  local result = tidy_file(tmpname)
+  local result = tidy_file(tmpname,options)
   os.remove(tmpname)
   return result
 end
