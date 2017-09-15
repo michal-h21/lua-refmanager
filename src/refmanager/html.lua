@@ -91,7 +91,8 @@ function Html:strip_scripts()
 end
 
 function Html:clean()
-  self:tidy():strip_comments():strip_scripts()
+  -- use the wrap option to prevent breaking of attributes accross lines
+  self:tidy("-w 512"):strip_comments():strip_scripts()
   return self
 end
 
