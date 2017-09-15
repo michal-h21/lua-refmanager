@@ -74,7 +74,7 @@ end
 function Html:tidy(options)
   local body = self:get_body()
   local result = tidy.tidy(body, options)
-  if result then self:set_body(result) end
+  if result and result:len() > 0 then self:set_body(result) end
   return self
 end
 
