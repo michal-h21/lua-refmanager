@@ -29,6 +29,8 @@ local PKG_VERSION = '0.1.0-1'
 
 local argparse = require "argparse"
 local parser = argparse()
+  :name "luarefmanager"
+  :description "Command line reference manager"
 
 
 local refmanager = {
