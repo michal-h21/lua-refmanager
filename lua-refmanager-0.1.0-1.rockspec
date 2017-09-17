@@ -17,14 +17,18 @@ dependencies = {
   "http",
   "htmlparser",
   "lua-iconv",
-  "lua-zlib"
+  "lua-zlib",
+  "argparse"
 }
 build = {
-  type = "builtin",
-   modules = {
-    ["refmanager"] = "src/refmanager.lua",
+  type = "none",
+  install = {
+   lua = {
     ["refmanager.tidy"] = "src/refmanager/tidy.lua",
     ["refmanager.html"] = "src/refmanager/html.lua",
     ["refmanager.http"] = "src/refmanager/http.lua"
-  }
+  },
+  bin = {
+    ["luarefmanager"] = "src/refmanager.lua",
+  }}
 }
