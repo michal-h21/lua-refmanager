@@ -27,25 +27,15 @@ local PKG_AUTHOR = 'Michal Hoftich'
 local PKG_EMAIL = 'michal.h21@gmail.com'
 local PKG_VERSION = '0.1.0-1'
 
+local argparse = require "argparse"
+local parser = argparse()
+
 
 local refmanager = {
     _VERSION = '0.1.0-1',
 }
 
+local args = parser:parse()
+print("arguments", args)
 
-function refmanager:new (o)
-    o = o or {}   -- create object if user does not provide one
-    setmetatable(o, self)
-    self.__index = self
-    return o
-end
 
-function refmanager:method(text)
-    -- docstring
-    if string.len(text) == 0 then
-        return false
-    end
-    return true
-end
-
-return refmanager
