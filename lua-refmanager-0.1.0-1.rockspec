@@ -18,7 +18,8 @@ dependencies = {
   "htmlparser",
   "lua-iconv",
   "lua-zlib",
-  "argparse"
+  "argparse",
+  "html-entities"
 }
 build = {
   type = "none",
