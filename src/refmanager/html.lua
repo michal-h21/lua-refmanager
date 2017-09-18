@@ -6,6 +6,7 @@ local tidy = require "refmanager.tidy"
 local http = require "refmanager.http"
 local htmlparser = require "htmlparser"
 local io = require "io"
+local entities = require "htmlEntities"
 
 
 local Html = {}
@@ -33,6 +34,7 @@ end
 --- Load HTML document from an URL
 -- @param url URL of the HTML page to be loaded
 function Html:url(url)
+  local url = self:decode_entities(url)
   local www = http.new(url)
   www:go()
   if www:get_status() == 200 then
@@ -88,6 +90,11 @@ function Html:strip_scripts()
   local body = self:get_body()
   self:set_body(tidy.strip_scripts(body))
   return self
+end
+
+--- Decode HTML entities
+function Html:decode_entities(url)
+  return entities.decode(url)
 end
 
 function Html:clean()
