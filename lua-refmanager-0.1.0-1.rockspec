@@ -19,17 +19,21 @@ dependencies = {
   "lua-iconv",
   "lua-zlib",
   "argparse",
-  "html-entities"
+  "html-entities",
+  "datafile"
 }
 build = {
   type = "none",
   install = {
-   lua = {
-    ["refmanager.tidy"] = "src/refmanager/tidy.lua",
-    ["refmanager.html"] = "src/refmanager/html.lua",
-    ["refmanager.http"] = "src/refmanager/http.lua"
+    lua = {
+      ["refmanager.tidy"] = "src/refmanager/tidy.lua",
+      ["refmanager.html"] = "src/refmanager/html.lua",
+      ["refmanager.http"] = "src/refmanager/http.lua",
+      ["refmanager.loader"] = "src/refmanager/loader.lua"
+    },
+    bin = {
+      ["luarefmanager"] = "src/refmanager.lua",
+    }
   },
-  bin = {
-    ["luarefmanager"] = "src/refmanager.lua",
-  }}
+  copy_directories = {"data"}
 }

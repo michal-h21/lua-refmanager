@@ -26,6 +26,7 @@
 local PKG_AUTHOR = 'Michal Hoftich'
 local PKG_EMAIL = 'michal.h21@gmail.com'
 local PKG_VERSION = '0.1.0-1'
+local loader = require "refmanager.loader"
 
 local argparse = require "argparse"
 local parser = argparse()
