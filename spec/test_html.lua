@@ -54,6 +54,15 @@ print(get_meta_property(dom, "og:description"))
 
 local j = dom:select("meta[property]")
 
+print "-------------------------"
+print("properties")
+
 for _, v in ipairs(j) do
   print(get_meta_property(dom, v.attributes.property))
 end
+
+print "-------------------------"
+print "names"
+for _, v in ipairs(dom:select("meta[name]")) do
+  print(get_meta_name(dom, v.attributes.name))
+end  
