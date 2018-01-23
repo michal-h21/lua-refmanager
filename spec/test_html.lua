@@ -26,8 +26,8 @@ local www = html.new()
 -- www:url(url)
 -- local body = www:get_body()
 -- htmlparser_looplimit=100009
-local dom,msg = www:url(url):get_dom()-- html.parse(body)
--- local dom,msg = www:url(url):clean():get_dom()-- html.parse(body)
+-- local dom,msg = www:url(url):get_dom()-- html.parse(body)
+local dom,msg = www:url(url):clean():get_dom()-- html.parse(body)
 print(www:get_body())
 
 local j = dom:select("head title")
