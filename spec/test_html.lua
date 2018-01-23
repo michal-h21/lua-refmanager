@@ -66,3 +66,18 @@ print "names"
 for _, v in ipairs(dom:select("meta[name]")) do
   print(get_meta_name(dom, v.attributes.name))
 end  
+
+print "-------------------------"
+print "itemprop"
+for _, v in ipairs(dom:select("[itemtype]")) do
+  print("itemtype", v.attributes.itemtype)
+  for _,y in ipairs(v:select("[itemprop]")) do
+    local text = y.attributes.content or y:gettext()
+    print("itemprop", y.attributes.itemprop,text)
+    for _, n in ipairs(y.nodes) do
+      for j,r in pairs(n) do
+        print(j,r)
+      end
+    end
+  end
+end
