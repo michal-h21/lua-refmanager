@@ -68,11 +68,16 @@ for _, v in ipairs(dom:select("meta[name]")) do
 end  
 
 print "-------------------------"
+local function cleantags(text)
+  local newtext = text:gsub("^[^>]+>","")
+  newtext =  newtext:gsub("<[^<]+$", "")
+  return newtext:gsub("<[^>]+>", "")
+end
 print "itemprop"
 for _, v in ipairs(dom:select("[itemtype]")) do
   print("itemtype", v.attributes.itemtype)
   for _,y in ipairs(v:select("[itemprop]")) do
-    local text = y.attributes.content or y:gettext()
+    local text = y.attributes.content or cleantags(y:gettext())
     print("itemprop", y.attributes.itemprop,text)
     for _, n in ipairs(y.nodes) do
       for j,r in pairs(n) do
