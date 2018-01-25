@@ -76,13 +76,19 @@ end
 print "itemprop"
 for _, v in ipairs(dom:select("[itemtype]")) do
   print("itemtype", v.attributes.itemtype)
-  for _,y in ipairs(v:select("[itemprop]")) do
-    local text = y.attributes.content or cleantags(y:gettext())
-    print("itemprop", y.attributes.itemprop,text)
-    for _, n in ipairs(y.nodes) do
-      for j,r in pairs(n) do
+  -- for _,y in ipairs(v:select("[itemprop]")) do
+    -- local text = y.attributes.content or cleantags(y:gettext())
+    -- print("itemprop", y.attributes.itemprop,text)
+    for _, n in ipairs(v.nodes) do
+      print "----------------------"
+      local text = n.attributes.content or cleantags(n:gettext())
+      local itemprop =n.attributes.itemprop 
+      if itemprop then
+        print(itemprop,text)
+      end
+      for j,r in pairs(n.deepernodes) do
         print(j,r)
       end
     end
-  end
+  -- end
 end
