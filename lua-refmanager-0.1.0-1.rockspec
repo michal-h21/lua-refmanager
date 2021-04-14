@@ -20,7 +20,8 @@ dependencies = {
   "lua-zlib",
   "argparse",
   "html-entities",
-  "datafile"
+  "datafile",
+  "dkjson"
 }
 build = {
   type = "none",
@@ -35,5 +36,5 @@ build = {
       ["luarefmanager"] = "src/refmanager.lua",
     }
   },
-  copy_directories = {"data"}
+  -- copy_directories = {"data"}
 }
