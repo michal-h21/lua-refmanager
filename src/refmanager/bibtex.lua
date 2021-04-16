@@ -120,25 +120,5 @@ function bibtex.parse(text)
 end
 
 
-local samplef = io.open(kpse.find_file("IEEEexample.bib","bib"), "r")
-local sample = samplef:read("*all")
-samplef:close()
-
--- sample = [[
--- @article{pokus,
--- title = "ahoj",
--- author = "ja"
--- }]]
--- local x = lpegmatch(grammar, sample)
-local newentries = bibtex.parse(sample)
-
-for _, entry in ipairs(newentries) do
-  print "=============="
-  print(entry.tag, entry.key)
-  print "--------------"
-  for k,v in pairs(entry.fields) do
-    print(k,v)
-  end
-end
 
 return bibtex
