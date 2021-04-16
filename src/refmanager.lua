@@ -23,10 +23,13 @@
 -- CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --
 
+kpse.set_program_name "luatex"
+luapackageloader = require("luapackageloader")
+luapackageloader.add_lua_searchers()
+
 local PKG_AUTHOR = 'Michal Hoftich'
 local PKG_EMAIL = 'michal.h21@gmail.com'
 local PKG_VERSION = '0.1.0-1'
-local loader = require "refmanager.loader"
 
 local argparse = require "argparse"
 local parser = argparse()
@@ -35,7 +38,7 @@ local parser = argparse()
 
 
 local refmanager = {
-    _VERSION = '0.1.0-1',
+    _VERSION = PKG_VERSION
 }
 
 local args = parser:parse()
