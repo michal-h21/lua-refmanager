@@ -1,3 +1,4 @@
+kpse.set_program_name "luatex"
 local bibtex = require "refmanager.bibtex"
 local Citation = {
 }
@@ -53,7 +54,7 @@ end
 
 function Citation:get_format(name)
   local format = self.formats[name] or "%s"
-  return string.format(format, self.bibdata[name])
+  return string.format(format, bibtex.decode(self.bibdata[name]))
 end
 
 function Citation:print_field(name)
@@ -78,7 +79,7 @@ function Citation:new_unit()
 end
 
 function Citation:format()
-  local formated =  table.concat(self.current):gsub("%.+", "."):gsub(",%.", ".")
+  local formated =  table.concat(self.current):gsub("%.+", "."):gsub(",%.", "."):gsub("%s+", " ")
   return formated
 end
 
@@ -123,7 +124,7 @@ local test = book({author="Josef Novák", title="Sample book", publisher="Grada"
 
 print(test:format())
 
-local samplef = io.open(kpse.find_file("IEEEexample.bib","bib"), "r")
+local samplef = io.open(kpse.find_file("biblatex-examples.bib","bib"), "r")
 local sample = samplef:read("*all")
 samplef:close()
 
