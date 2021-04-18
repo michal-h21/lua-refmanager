@@ -1,7 +1,9 @@
-kpse.set_program_name "luatex"
+-- kpse.set_program_name "luatex"
 
 -- This is a basic BibTeX parser. It is based on an older version of ConTeXt code. 
 -- See `kpsewhich bibl-bib.lua` 
+--
+local accents = require "refmanager.texaccents"
 
 local lower, format, gsub, concat = string.lower, string.format, string.gsub, table.concat
 local lpegmatch = lpeg.match
@@ -119,6 +121,32 @@ function bibtex.parse(text)
   return copy(entries)
 end
 
+
+-- convert TeX accents to Unicode and remove unnecessary brackets
+function bibtex.decode(text)
+  -- remove accents
+  local text = text:gsub("(\\.){(.-)}", "%1 %2")
+  text = text:gsub("{%s*(\\[^\\]+)}", accents)
+  -- expand \& etc
+  text = text:gsub("\\(%A)", "%1")
+  -- try to remove other known commands
+  text = text:gsub("(\\%w+)", accents)
+  -- remove TeX commands with arguments
+  text = text:gsub("\\.-(%b{})", function(a)
+    return a:sub(2, -2)
+  end)
+  -- remove brackets that are still here
+  text = text:gsub("{(.-)}", "%1")
+
+  -- expand 
+
+  return text
+
+end
+
+
+
+-- print(bibtex.decode([[Die Geburt der {\v c}{\v{e}} Trag{\"o}die. Unzeitgem{\"a}{\ss}e Betrachtungen I--IV. Nachgelassene Schriften 1870--1973. M{\"u}nchen. Bronis{\l}aw. Artemis \& Winkler.]]))
 
 
 return bibtex
