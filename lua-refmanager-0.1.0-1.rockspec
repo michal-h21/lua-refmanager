@@ -14,14 +14,16 @@ description = {
 }
 dependencies = {
   "lua >= 5.1",
-  "http",
+  -- "http",
   "htmlparser",
   "lua-iconv",
   "lua-zlib",
   "argparse",
   "html-entities",
-  "datafile",
-  "dkjson"
+  "date",
+  -- "datafile",
+  "dkjson",
+  "lpeg"
 }
 build = {
   type = "none",
