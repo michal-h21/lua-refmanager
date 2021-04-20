@@ -3,10 +3,18 @@ local bibtex = require "refmanager.bibtex"
 local Citation = {
 }
 
+
+local uchar = utf8.char
 function Citation:new(entrytype, bibdata)
   local bibdata = bibdata or {}
   self.__index = self
-  return setmetatable({bibdata = bibdata, entrytype = entrytype, current = {}, separator = ".", punctuation = "", space = " ", ignore_punct = true, formats = {} }, Citation)
+  local uppercases = bibtex.uppercases
+  local lowercases = bibtex.lowercases
+  return setmetatable({
+    bibdata = bibdata, entrytype = entrytype, current = {}, separator = ".", punctuation = "", 
+    space = " ", ignore_punct = true, formats = {}, printed_fields=0 ,
+    lowercases=lowercases, uppercases = uppercases
+  }, Citation)
 end
 
 
@@ -20,10 +28,11 @@ function Citation:add_content(content)
 end
 
 function Citation:print_separator()
-  if not self.ignore_punct then
+  if self.printed_fields > 0 then
     self:add_content(self.separator)
     self:print_space()
   end
+  self.printed_fields = 0
 end
 
 function Citation:print_space()
@@ -57,12 +66,37 @@ function Citation:get_format(name)
   return string.format(format, bibtex.decode(self.bibdata[name]))
 end
 
+
+local ucodes = utf8.codes
+function Citation:make_initial(text)
+  local out = {}
+  -- loop over utf-8 codepoints of the text, initialize the first
+  for pos, code in ucodes(text) do
+    if pos == 1 then
+      -- try to find the uppercase for this character
+      code = self.uppercases[code] or code
+    end
+    out[#out+1] = uchar(code)
+  end
+  return table.concat(out)
+end
+
+
+function Citation:add_text(text)
+  -- make initial for every text after new unit
+  if self.printed_fields == 0 then
+    text = self:make_initial(text)
+  end
+  self:add_content(text)
+  self.ignore_punct = false
+  self.printed_fields = self.printed_fields + 1
+end
+
 function Citation:print_field(name)
   if self.bibdata[name] then
     self:print_punct()
     local format = self:get_format(name)
-    self:add_content(format)
-    self.ignore_punct = false
+    self:add_text(format)
   else
     self.ignore_punct = true
     -- self.punctuation = ""
@@ -70,7 +104,7 @@ function Citation:print_field(name)
 end
 
 function Citation:finish()
-  self:add_content(self.separator)
+  self:print_separator()
 end
 
 function Citation:new_unit()
@@ -83,17 +117,35 @@ function Citation:format()
   return formated
 end
 
+--- something like bibmacro in biblatex
+local function print_title(self,name)
+  -- use empty string for the "title" field, "journal" for "journaltitle" etc.
+  self:print_field(name .. "title")
+  local subtitle = name .. "subtitle"
+  if self:iffield(subtitle) then
+    self:add_punct(":")
+    self:print_field(subtitle)
+  end
+end
+
+
 local function book(data)
   local test = Citation:new ( "book",  data)
+  test:set_format("isbn", "ISBN %s")
   test:print_field("author")
   test:new_unit()
-  test:print_field("title")
+  -- test:print_field("title")
+  -- test:add_punct(":")
+  -- test:print_field("subtitle")
+  print_title(test,"")
   test:new_unit()
   test:print_field("location")
   test:add_punct(":")
   test:print_field("publisher")
   test:add_punct(",")
   test:print_field("year")
+  test:new_unit()
+  test:print_field("isbn")
   test:finish()
   return test
 end
@@ -104,10 +156,14 @@ local function article(data)
   test:set_format("volume", "vol. %s")
   test:set_format("number", "no. %s")
   test:set_format("pages", "p. %s")
+  test:set_format("issn", "ISSN %s")
   test:new_unit()
-  test:print_field("title")
+  print_title(test,"")
   test:new_unit()
-  test:print_field("journal")
+  print_title(test,"journal")
+  -- test:print_field("journaltitle")
+  -- test:add_punct(":")
+  -- test:print_field("journalsubtitle")
   test:new_unit()
   test:print_field("year")
   test:add_punct(",")
@@ -116,6 +172,8 @@ local function article(data)
   test:print_field("number")
   test:add_punct(",")
   test:print_field("pages")
+  test:new_unit()
+  test:print_field("issn")
   test:finish()
   return test
 end
@@ -151,3 +209,4 @@ for _, entry in ipairs(newentries) do
     -- print(k,v)
   -- end
 end
+
