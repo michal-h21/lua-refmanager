@@ -14,7 +14,6 @@ description = {
 }
 dependencies = {
   "lua >= 5.1",
-  -- "http",
   "htmlparser",
   "lua-iconv",
   "lua-zlib",
@@ -23,7 +22,10 @@ dependencies = {
   "date",
   -- "datafile",
   "dkjson",
-  "lpeg"
+  "lpeg",
+  "luasocket",
+  "luasec",
+  -- "http",
 }
 build = {
   type = "none",
@@ -32,7 +34,11 @@ build = {
       ["refmanager.tidy"] = "src/refmanager/tidy.lua",
       ["refmanager.html"] = "src/refmanager/html.lua",
       ["refmanager.http"] = "src/refmanager/http.lua",
-      ["refmanager.loader"] = "src/refmanager/loader.lua"
+      ["refmanager.loader"] = "src/refmanager/loader.lua",
+      ["refmanager.logging"] = "src/refmanager/logging.lua",
+      ["refmanager.bibtex"] = "src/refmanager/bibtex.lua",
+      ["refmanager.citation"] = "src/refmanager/citation.lua",
+      ["refmanager.texaccents"] = "src/refmanager/texaccents.lua",
     },
     bin = {
       ["luarefmanager"] = "src/refmanager.lua",
